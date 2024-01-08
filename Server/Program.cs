@@ -29,11 +29,31 @@ namespace Program
                         if (b != 0)
                         {
                             recv++;
-                        }
+                        } 
                     }
 
-                    string request = Encoding.UTF8.GetString(buffer, 0, recv);
-                    Console.WriteLine(request);
+                    int players = 0;
+                    
+                    try
+                    {
+                        string request = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+                        Console.WriteLine(request);
+                        if (request == "connect")
+                        {
+                            players++;
+                            if (players <= 2)
+                            {
+                                byte[] sendData = BitConverter.GetBytes(players);
+                                NetworkStream ns = client.GetStream();
+                                ns.Write(sendData, 0 ,sendData.Length);
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        int request = BitConverter.ToInt32(buffer, 0);
+                        Console.WriteLine(request);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -44,4 +64,3 @@ namespace Program
         }
     }
 }
-
